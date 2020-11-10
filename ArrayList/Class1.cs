@@ -10,10 +10,23 @@ namespace ArrayList
         private int[] _array;                       //поле массива
         public int Length { get; private set; }     //свойство объекта - полезная длина
 
-        public ArrayList()                          //конструктор
+        public ArrayList()                          //конструктор1
         {
             _array = new int[3];
             Length = 0;
+        }
+
+        public ArrayList(int n)                     //конструктор2
+        {
+            _array = new int[n];
+            Length = 0;
+        }
+
+        public ArrayList(int[] arr)                 //конструктор3
+        {
+            _array = new int[arr.Length];
+            Array.Copy(arr, _array, arr.Length);
+            Length = arr.Length;
         }
 
         public void Add(int n)
@@ -189,12 +202,7 @@ namespace ArrayList
             return i_min;
         }
 
-        private void Cut()
-        {
-            int[] newArray = new int[Length];
-            Array.Copy(_array, newArray, Length);
-            _array = newArray;
-        }
+       
 
         public void SortIncrease()
         {
@@ -232,6 +240,7 @@ namespace ArrayList
             {
                 _array[Length + i] = arr[i];
             }
+            Length += arr.Length;
         }
 
         public void AddArrayToOrigin(int[] arr)
@@ -240,6 +249,29 @@ namespace ArrayList
             Array.Copy(arr, newArray, arr.Length);
             Array.Copy(_array, 0, newArray, arr.Length, Length);
             _array = newArray;
+            Length += arr.Length;
+        }
+
+        public void AddArrayToIndex(int index, int[] arr)
+        {
+            if (index < 0)
+                throw new Exception("Invalid value of index");
+            if (index < Length)
+            {
+                int[] newArray = new int[arr.Length + Length];
+                Array.Copy(_array, newArray, index);                        //копирование до индекса
+                Array.Copy(arr, 0, newArray, index, arr.Length);            //копирование массива начиная с индекса
+                Array.Copy(_array, index, newArray, arr.Length + index, _array.Length - index);
+                _array = newArray;
+                Length += arr.Length;
+            }
+            else
+            {
+                int[] newArray = new int[index + arr.Length];
+                Array.Copy(_array, newArray, index);
+                Array.Copy(arr, 0, newArray, index, arr.Length);
+
+            }
         }
         private void RizeSize(int size = 1)
         {
@@ -265,5 +297,11 @@ namespace ArrayList
             _array = newArray;
         }
 
+        private void Cut()
+        {
+            int[] newArray = new int[Length];
+            Array.Copy(_array, newArray, Length);
+            _array = newArray;
+        }
     }
 }

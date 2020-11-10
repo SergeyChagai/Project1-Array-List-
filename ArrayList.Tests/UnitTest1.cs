@@ -396,5 +396,37 @@ namespace ArrayList.Tests
                 Assert.Pass();
             Assert.Fail();
         }
+
+        [TestCase(new int[] { 1, 2, 3, 4, 5 }, new int[] { 6, 7 }, new int[] { 6, 7, 1, 2, 3, 4, 5 })]
+        [TestCase(new int[] { 1, 2, 3}, new int[] { 200, 400}, new int[] { 200, 400, 1, 2, 3 })]
+        [TestCase(new int[] { 1, 2, 3, 4, 5 }, new int[] { 3, 8, 9 }, new int[] { 3, 8, 9, 1, 2, 3, 4, 5 })]
+        public void AddArrayToOrigin(int[] array, int[] add, int[] expected)
+        {
+            ArrayList arr = new ArrayList(array);
+            ArrayList arr2 = new ArrayList(expected);
+
+            arr.AddArrayToOrigin(add);
+
+            if (arr.Equals(arr2))
+                Assert.Pass();
+            Assert.Fail();
+        }
+
+        [TestCase(2, new int[] { 6, 7 }, new int[] {  1, 2, 6, 7, 3, 4, 5 })]
+        [TestCase(1, new int[] { 200, 400 }, new int[] {  1, 200, 400, 2, 3, 4, 5 })]
+        [TestCase(0, new int[] { 3, 8, 9 }, new int[] { 3, 8, 9, 1, 2, 3, 4, 5 })]
+        public void AddArrayToIndex(int index, int[] add, int[] expected)
+        {
+            ArrayList arr1 = new ArrayList(new int[] { 1, 2, 3, 4, 5 });
+            ArrayList arr2 = new ArrayList(expected);
+
+            arr1.AddArrayToIndex(index, add);
+
+            if (arr1.Equals(arr2))
+                Assert.Pass();
+            Assert.Fail();
+        }
+
+
     }
 }
