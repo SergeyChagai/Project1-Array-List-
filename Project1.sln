@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArrayList", "ArrayList\Arra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArrayList.Tests", "ArrayList.Tests\ArrayList.Tests.csproj", "{83A42EF7-FA07-41A8-A091-3A9CB68CA397}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLib", "..\Homework4\MyLib\MyLib.csproj", "{7044CF6D-D836-423F-8D44-4D73B3CD9239}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{83A42EF7-FA07-41A8-A091-3A9CB68CA397}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83A42EF7-FA07-41A8-A091-3A9CB68CA397}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83A42EF7-FA07-41A8-A091-3A9CB68CA397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7044CF6D-D836-423F-8D44-4D73B3CD9239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7044CF6D-D836-423F-8D44-4D73B3CD9239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7044CF6D-D836-423F-8D44-4D73B3CD9239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7044CF6D-D836-423F-8D44-4D73B3CD9239}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
