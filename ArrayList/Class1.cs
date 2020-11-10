@@ -18,8 +18,9 @@ namespace ArrayList
 
         public ArrayList(int n)                     //конструктор2
         {
-            _array = new int[n];
-            Length = 0;
+            _array = new int[3];
+            _array[0] = n;
+            Length = 1;
         }
 
         public ArrayList(int[] arr)                 //конструктор3
@@ -29,15 +30,44 @@ namespace ArrayList
             Length = arr.Length;
         }
 
+        public int this[int index]
+        {
+            get
+            {
+                if (index > Length || index < 0)
+                    throw new Exception();
+                return _array[index];
+            }
+            set
+            {
+                if (index > Length || index < 0)
+                    throw new Exception();
+                _array[index] = value;
+            }
+        }
+
         public void Add(int n)
         {
             if (Length >= _array.Length)
             {
                 RizeSize();
             }
-            _array[Length] = n;
+            this[Length] = n;
             Length++;
         }
+
+        public void Add(int[] arr)
+        {
+            Cut();
+            if (Length + arr.Length >= _array.Length)
+                RizeSize(Length + arr.Length - _array.Length);
+            for (int i = 0; i < arr.Length; i++)
+            {
+                _array[Length + i] = arr[i];
+            }
+            Length += arr.Length;
+        }
+
 
         public void AddToOrigin(int n)
         {
@@ -48,11 +78,20 @@ namespace ArrayList
             int[] newArray = new int[_array.Length];
             for (int i = Length - 1; i >= 0; i--)
             {
-                newArray[i + 1] = _array[i];
+                newArray[i + 1] = this[i];
             }
             _array = newArray;
             _array[0] = n;
             Length++;
+        }
+
+        public void AddToOrigin(int[] arr)
+        {
+            int[] newArray = new int[arr.Length + Length];
+            Array.Copy(arr, newArray, arr.Length);
+            Array.Copy(_array, 0, newArray, arr.Length, Length);
+            _array = newArray;
+            Length += arr.Length;
         }
 
         public void AddToIndex(int index, int n)
@@ -60,39 +99,80 @@ namespace ArrayList
             if (index < 0)
                 throw new Exception("Index can not be negative");
             if (index >= Length)
-                Length = index + 1;
+                Length = index;
             while (Length >= _array.Length)
             {
                 RizeSize();
             }
             int[] newArray = new int[_array.Length];
             Array.Copy(_array, newArray, index);
-            for (int i = Length - 1; i >= index; i--)
+            for (int i = index; i < Length; i++)
             {
                 newArray[i + 1] = _array[i];
             }
             _array = newArray;
             _array[index] = n;
             Length++;
+            Cut();
+        }
+
+        public void AddToIndex(int index, int[] arr)
+        {
+            if (index < 0)
+                throw new Exception("Invalid value of index");
+            if (index < Length)
+            {
+                int[] newArray = new int[arr.Length + Length];
+                Array.Copy(_array, newArray, index);                        //копирование до индекса
+                Array.Copy(arr, 0, newArray, index, arr.Length);            //копирование массива начиная с индекса
+                Array.Copy(_array, index, newArray, arr.Length + index, _array.Length - index);
+                _array = newArray;
+                Length += arr.Length;
+            }
+            else
+            {
+                int[] newArray = new int[index + arr.Length];
+                Array.Copy(_array, newArray, index);
+                Array.Copy(arr, 0, newArray, index, arr.Length);
+
+            }
         }
 
         public void Delete()
         {
+            if (Length == 0)
+                throw new Exception("List is empty");
+            Length--;
             if (Length <= _array.Length / 2)
             {
                 ReduceSize();
             }
-            Length--;
+        }
+
+        public void Delete(int n)
+        {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("Argument can't be negative");
+            if (Length == 0)
+                throw new Exception("List is empty");
+            if (n > Length)
+                throw new IndexOutOfRangeException();
+
+            Length -= n;
+            if (Length <= _array.Length / 2)
+            {
+                ReduceSize();
+            }
         }
 
         public void DeleteFromOrigin()
         {
-           
+            if (Length == 0)
+                throw new Exception("List is empty");
             int[] newArray = new int[_array.Length];
-            for (int i = 0; i < Length; i++)
+            for (int i = 0; i + 1 < Length; i++)
             {
-                if (Length > 1)
-                    newArray[i] = _array[i + 1];
+                newArray[i] = _array[i + 1];
             }
             if (Length <= _array.Length / 2)
             {
@@ -102,13 +182,27 @@ namespace ArrayList
             Length--;
         }
 
+        public void DeleteFromOrigin(int n)
+        {
+            if (Length == 0)
+                throw new Exception("List is empty");
+            int[] newArray = new int[_array.Length - n];
+            Array.Copy(_array, n, newArray, 0, newArray.Length);
+            if (Length <= _array.Length / 2)
+            {
+                ReduceSize();
+            }
+            _array = newArray;
+            Length-=n;
+        }
+
         public void DeleteFromIndex(int index)
         {
             if (index < 0)
-                throw new Exception("Index can not be negative");
+                throw new ArgumentOutOfRangeException("Index can not be negative");
             if (index >= Length)
-                throw new Exception("Element whith this index does not exist");
-            
+                throw new IndexOutOfRangeException();
+
             int[] newArray = new int[_array.Length];
             Array.Copy(_array, newArray, index);
             for (int i = index; i + 1 < Length; i++)
@@ -117,6 +211,25 @@ namespace ArrayList
             }
             _array = newArray;
             Length--;
+        }
+
+        public void DeleteFromIndex(int index, int amount)
+        {
+            if (index < 0)
+                throw new ArgumentOutOfRangeException("Index can't be negative");
+            if (index >= Length)
+                throw new IndexOutOfRangeException();
+            if (index + amount > Length)
+                throw new IndexOutOfRangeException();
+
+            int end_of_hole = index + amount;
+            int[] newArray = new int[_array.Length];
+            Array.Copy(_array, newArray, index);
+            Array.Copy(_array, end_of_hole, newArray, index, Length - end_of_hole);
+            
+            _array = newArray;
+            Cut();
+            Length -= amount;
         }
 
         public int AccessToIndex(int i)
@@ -136,11 +249,11 @@ namespace ArrayList
             throw new Exception("List does not contain this element");
         }
 
-        public void ChangeElement(int index, int n)
+        public void SetElement(int index, int n)
         {
             if (index >= Length)
                 throw new Exception("List does not contain this element");
-            _array[index] = n;
+            this[index] = n;
         }
         public bool Equals(ArrayList obj)
         {
@@ -231,47 +344,25 @@ namespace ArrayList
             }
         }
 
-        public void AddArray(int[] arr)
+       
+       
+
+        
+        public void DeleteNElementsFromOrigin(int n)
         {
-            Cut();
-            if (Length + arr.Length >= _array.Length)
-                RizeSize(Length + arr.Length - _array.Length);
-            for (int i = 0; i < arr.Length; i++)
-            {
-                _array[Length + i] = arr[i];
-            }
-            Length += arr.Length;
+            int[] newArray = new int[Length - n];
+            Array.Copy(_array, n, newArray, 0, Length - n);
+            Length -= n;
         }
 
-        public void AddArrayToOrigin(int[] arr)
+        public void DeleteNElementsFromIndex(int index, int n)
         {
-            int[] newArray = new int[arr.Length + Length];
-            Array.Copy(arr, newArray, arr.Length);
-            Array.Copy(_array, 0, newArray, arr.Length, Length);
-            _array = newArray;
-            Length += arr.Length;
-        }
-
-        public void AddArrayToIndex(int index, int[] arr)
-        {
-            if (index < 0)
+            if (index < 0 || index >= Length)
                 throw new Exception("Invalid value of index");
-            if (index < Length)
-            {
-                int[] newArray = new int[arr.Length + Length];
-                Array.Copy(_array, newArray, index);                        //копирование до индекса
-                Array.Copy(arr, 0, newArray, index, arr.Length);            //копирование массива начиная с индекса
-                Array.Copy(_array, index, newArray, arr.Length + index, _array.Length - index);
-                _array = newArray;
-                Length += arr.Length;
-            }
-            else
-            {
-                int[] newArray = new int[index + arr.Length];
-                Array.Copy(_array, newArray, index);
-                Array.Copy(arr, 0, newArray, index, arr.Length);
-
-            }
+            int[] newArray = new int[Length - n];
+            Array.Copy(_array, newArray, index);
+            Array.Copy(_array, index + n, newArray, index, Length - index - n);
+            Length -= n;
         }
         private void RizeSize(int size = 1)
         {
@@ -290,10 +381,11 @@ namespace ArrayList
             int newLength = _array.Length;
             while (newLength > _array.Length - size)
             {
-                newLength = (int)(newLength * 0.66d);
+                newLength = (_array.Length == 1) ? (int)(newLength * 0.66d) : 0;
             }
             int[] newArray = new int[newLength];
-            Array.Copy(_array, newArray, _array.Length);
+            if (newLength > 0)
+                Array.Copy(_array, newArray, _array.Length);
             _array = newArray;
         }
 
