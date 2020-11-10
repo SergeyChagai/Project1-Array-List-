@@ -16,7 +16,7 @@ namespace ArrayList
 
         public void Add(int n)
         {
-            if(Length >= _array.Length)
+            if (Length >= _array.Length)
             {
                 RizeSize();
             }
@@ -31,7 +31,7 @@ namespace ArrayList
                 RizeSize();
             }
             int[] newArray = new int[_array.Length];
-            for (int i = _array.Length - 1; i >= 0; i--)
+            for (int i = Length - 1; i >= 0; i--)
             {
                 newArray[i + 1] = _array[i];
             }
@@ -42,12 +42,17 @@ namespace ArrayList
 
         public void AddToIndex(int index, int n)
         {
-            if (Length >= _array.Length)
+            if (index < 0)
+                throw new Exception("Index can not be negative");
+            if (index >= Length)
+                Length = index + 1;
+            while (Length >= _array.Length)
             {
                 RizeSize();
             }
             int[] newArray = new int[_array.Length];
-            for (int i = _array.Length - 1; i >= index; i--)
+            Array.Copy(_array, newArray, index);
+            for (int i = Length - 1; i >= index; i--)
             {
                 newArray[i + 1] = _array[i];
             }
@@ -55,11 +60,24 @@ namespace ArrayList
             _array[index] = n;
             Length++;
         }
-        //public override bool Equals(object obj)
-        //{
-        //    bool rep = false;
-        //    for (int i = 0; i < )
-        //}
+
+        public void Delete()
+        {
+            if (Length <= _array.Length / 2)
+            {
+                ReduceSize();
+            }
+            Length--;
+        }
+        public bool Equals(ArrayList obj)
+        {
+            for (int i = 0; i < this.Length || i < obj.Length; i++)
+            {
+                if (this._array[i] != obj._array[i])
+                    return false;
+            }
+            return true;
+        }
 
         private void RizeSize(int size = 1)
         {
@@ -67,6 +85,18 @@ namespace ArrayList
             while(newLength < _array.Length + size)
             {
                 newLength = (int)(newLength * 1.33d + 1);
+            }
+            int[] newArray = new int[newLength];
+            Array.Copy(_array, newArray, _array.Length);
+            _array = newArray;
+        }
+
+        private void ReduceSize(int size = 1)
+        {
+            int newLength = _array.Length;
+            while (newLength > _array.Length - size)
+            {
+                newLength = (int)(newLength * 0.66d);
             }
             int[] newArray = new int[newLength];
             Array.Copy(_array, newArray, _array.Length);
