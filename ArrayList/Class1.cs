@@ -30,23 +30,23 @@ namespace ArrayList
             Length = arr.Length;
         }
 
-        public int this[int index]
+        public int this[int index]                  //переопределение индексатора
         {
             get
             {
                 if (index > Length || index < 0)
-                    throw new Exception();
+                    throw new IndexOutOfRangeException();
                 return _array[index];
             }
             set
             {
                 if (index > Length || index < 0)
-                    throw new Exception();
+                    throw new IndexOutOfRangeException();
                 _array[index] = value;
             }
         }
 
-        public void Add(int n)
+        public void Add(int n)                      //добавление числа в конец списка
         {
             if (Length >= _array.Length)
             {
@@ -56,7 +56,7 @@ namespace ArrayList
             Length++;
         }
 
-        public void Add(int[] arr)
+        public void Add(int[] arr)                  //добавление нескольких чисел в конец списка
         {
             Cut();
             if (Length + arr.Length >= _array.Length)
@@ -69,7 +69,7 @@ namespace ArrayList
         }
 
 
-        public void AddToOrigin(int n)
+        public void AddToOrigin(int n)              //добавление числа в начало списка
         {
             if (Length >= _array.Length)
             {
@@ -85,7 +85,7 @@ namespace ArrayList
             Length++;
         }
 
-        public void AddToOrigin(int[] arr)
+        public void AddToOrigin(int[] arr)          //добавление нескольких чисел в начало списка
         {
             int[] newArray = new int[arr.Length + Length];
             Array.Copy(arr, newArray, arr.Length);
@@ -119,7 +119,7 @@ namespace ArrayList
         public void AddToIndex(int index, int[] arr)
         {
             if (index < 0)
-                throw new Exception("Invalid value of index");
+                throw new IndexOutOfRangeException("Invalid value of index");
             if (index < Length)
             {
                 int[] newArray = new int[arr.Length + Length];
@@ -132,16 +132,20 @@ namespace ArrayList
             else
             {
                 int[] newArray = new int[index + arr.Length];
-                Array.Copy(_array, newArray, index);
-                Array.Copy(arr, 0, newArray, index, arr.Length);
-
+                Array.Copy(_array, newArray, _array.Length);
+                int i = _array.Length;
+                while (i < index)
+                    i++;
+                Array.Copy(arr, 0, newArray, i, arr.Length);
+                _array = newArray;
+                Length += arr.Length;
             }
         }
 
         public void Delete()
         {
             if (Length == 0)
-                throw new Exception("List is empty");
+                return;
             Length--;
             if (Length <= _array.Length / 2)
             {
@@ -153,15 +157,15 @@ namespace ArrayList
         {
             if (n < 0)
                 throw new ArgumentOutOfRangeException("Argument can't be negative");
-            if (Length == 0)
-                throw new Exception("List is empty");
             if (n > Length)
-                throw new IndexOutOfRangeException();
-
-            Length -= n;
-            if (Length <= _array.Length / 2)
+                n = Length;
+            if (n > 0)
             {
-                ReduceSize();
+                Length -= n;
+                if (Length <= _array.Length / 2)
+                {
+                    ReduceSize();
+                }
             }
         }
 
@@ -218,9 +222,9 @@ namespace ArrayList
             if (index < 0)
                 throw new ArgumentOutOfRangeException("Index can't be negative");
             if (index >= Length)
-                throw new IndexOutOfRangeException();
+                return;
             if (index + amount > Length)
-                throw new IndexOutOfRangeException();
+                amount = Length - index;
 
             int end_of_hole = index + amount;
             int[] newArray = new int[_array.Length];
@@ -246,20 +250,25 @@ namespace ArrayList
                 if (_array[i] == n)
                     return i;
             }
-            throw new Exception("List does not contain this element");
+            throw new ArgumentException("List does not contain this element");
         }
 
         public void SetElement(int index, int n)
         {
+            if (index < 0)
+                throw new ArgumentOutOfRangeException("index can't be negative");
             if (index >= Length)
-                throw new Exception("List does not contain this element");
-            this[index] = n;
+                AddToIndex(index, n);
+            else
+                this[index] = n;
         }
-        public bool Equals(ArrayList obj)
+        public override bool Equals(Object obj)
         {
-            for (int i = 0; i < this.Length || i < obj.Length; i++)
+            ArrayList arrayList = (ArrayList)obj;
+
+            for (int i = 0; i < this.Length || i < arrayList.Length; i++)
             {
-                if (this._array[i] != obj._array[i])
+                if (this._array[i] != arrayList._array[i])
                     return false;
             }
             return true;
@@ -277,6 +286,8 @@ namespace ArrayList
 
         public int FindMax()
         {
+            if (Length == 0)
+                throw new Exception("List is empty");
             int max = _array[0];
             for (int i = 1; i < Length; i++)
             {
@@ -287,6 +298,8 @@ namespace ArrayList
 
         public int FindMin()
         {
+            if (Length == 0)
+                throw new Exception("List is empty");
             int min = _array[0];
             for (int i = 1; i < Length; i++)
             {
@@ -297,6 +310,8 @@ namespace ArrayList
 
         public int IndexOfMax()
         {
+            if (Length == 0)
+                throw new Exception("List is empty");
             int i_max = 0;
             for (int i = 1; i < Length; i++)
             {
@@ -307,6 +322,8 @@ namespace ArrayList
 
         public int IndexOfMin()
         {
+            if (Length == 0)
+                throw new Exception("List is empty");
             int i_min = 0;
             for (int i = 1; i < Length; i++)
             {
@@ -332,38 +349,41 @@ namespace ArrayList
 
         public void DeleteFirstElementWhithValue(int n)
         {
-            DeleteFromIndex(IndexOfElement(n));
+            for (int i = 0; i < Length; i++)
+            {
+                if (_array[i] == n)
+                {
+                    DeleteFromIndex(i);
+                    return;
+                }
+            }
         }
 
-        public void DeleteAllElementsWhitsValue(int n)
+        public void DeleteAllElementsWhithValue(int n)
         {
             for (int i = 0; i < Length; i++)
             {
                 if (_array[i] == n)
                     DeleteFromIndex(i);
             }
-        }
-
-       
-       
-
+        } 
         
-        public void DeleteNElementsFromOrigin(int n)
-        {
-            int[] newArray = new int[Length - n];
-            Array.Copy(_array, n, newArray, 0, Length - n);
-            Length -= n;
-        }
+        //public void DeleteNElementsFromOrigin(int n)
+        //{
+        //    int[] newArray = new int[Length - n];
+        //    Array.Copy(_array, n, newArray, 0, Length - n);
+        //    Length -= n;
+        //}
 
-        public void DeleteNElementsFromIndex(int index, int n)
-        {
-            if (index < 0 || index >= Length)
-                throw new Exception("Invalid value of index");
-            int[] newArray = new int[Length - n];
-            Array.Copy(_array, newArray, index);
-            Array.Copy(_array, index + n, newArray, index, Length - index - n);
-            Length -= n;
-        }
+        //public void DeleteNElementsFromIndex(int index, int n)
+        //{
+        //    if (index < 0 || index >= Length)
+        //        throw new Exception("Invalid value of index");
+        //    int[] newArray = new int[Length - n];
+        //    Array.Copy(_array, newArray, index);
+        //    Array.Copy(_array, index + n, newArray, index, Length - index - n);
+        //    Length -= n;
+        //}
         private void RizeSize(int size = 1)
         {
             int newLength = _array.Length;

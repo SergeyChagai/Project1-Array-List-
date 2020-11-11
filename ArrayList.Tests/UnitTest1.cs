@@ -13,15 +13,11 @@ namespace ArrayList.Tests
         public void Add(int case_arr, int case_expected_arr)
         {
             ArrayList arr = new ArrayList(ArrayMock(case_arr));
-            ArrayList arr2 = new ArrayList(ArrayExpectedMock(case_expected_arr));
+            ArrayList expected = new ArrayList(ArrayExpectedMock(case_expected_arr));
 
             arr.Add(10);
-           
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+
+            Assert.AreEqual(expected, arr);
         }
 
         [TestCase(1, new int[] { 6, 7 }, new int[] { 1, 2, 3, 4, 5, 6, 7 })]
@@ -34,11 +30,7 @@ namespace ArrayList.Tests
 
             arr.Add(add);
 
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(arr2, arr);
         }
 
         [TestCase(1, new int[] { 10, 1, 2, 3, 4, 5 })]
@@ -52,11 +44,7 @@ namespace ArrayList.Tests
 
             arr.AddToOrigin(10);
 
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(arr2, arr);
         }
 
         [TestCase(new int[] { 1, 2, 3, 4, 5 }, new int[] { 6, 7 }, new int[] { 6, 7, 1, 2, 3, 4, 5 })]
@@ -69,9 +57,7 @@ namespace ArrayList.Tests
 
             arr.AddToOrigin(add);
 
-            if (arr.Equals(arr2))
-                Assert.Pass();
-            Assert.Fail();
+            Assert.AreEqual(arr2, arr);
         }
 
         [TestCase(1, 0, new int[] { 10, 1, 2, 3, 4, 5 })]
@@ -84,25 +70,41 @@ namespace ArrayList.Tests
 
             arr.AddToIndex(index, 10);
 
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
+            Assert.AreEqual(arr2, arr);
+        }
+
+        [TestCase(-1, 0)]
+        public void AddToIndexNegative( int index, int number)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(1));
+
+            try { arr.AddToIndex(index, number); }
+            catch { Assert.Pass(); }
             Assert.Fail();
         }
 
         [TestCase(2, new int[] { 6, 7 }, new int[] { 1, 2, 6, 7, 3, 4, 5 })]
         [TestCase(1, new int[] { 200, 400 }, new int[] { 1, 200, 400, 2, 3, 4, 5 })]
-        [TestCase(0, new int[] { 3, 8, 9 }, new int[] { 3, 8, 9, 1, 2, 3, 4, 5 })]
+        [TestCase(8, new int[] { 3, 8, 9 }, new int[] { 1, 2, 3, 4, 5, 0, 0, 0, 3, 8, 9 })]
+
         public void AddToIndex(int index, int[] add, int[] expected)
         {
-            ArrayList arr1 = new ArrayList(new int[] { 1, 2, 3, 4, 5 });
+            ArrayList arr = new ArrayList(new int[] { 1, 2, 3, 4, 5 });
             ArrayList arr2 = new ArrayList(expected);
 
-            arr1.AddToIndex(index, add);
+            arr.AddToIndex(index, add);
 
-            if (arr1.Equals(arr2))
-                Assert.Pass();
+            Assert.AreEqual(arr2, arr);
+
+        }
+
+        [TestCase(-1, new int[] { 6, 7 })]
+        public void AddToIndexNegative(int index, int[] add)
+        {
+            ArrayList arr1 = new ArrayList(new int[] { 1, 2, 3, 4, 5 });
+
+            try { arr1.AddToIndex(index, add); }
+            catch { Assert.Pass(); }
             Assert.Fail();
         }
 
@@ -110,6 +112,7 @@ namespace ArrayList.Tests
         [TestCase(2, new int[] { 5, 4, 3, 2})]
         [TestCase(3, new int[] { 999, 888, 777, 666, 555, 444, 333, 222})]
         [TestCase(5, new int[] { })]
+        [TestCase(4, new int[] { })]
         public void Delete(int case_arr, int[] expected)
         {
             ArrayList arr = new ArrayList(ArrayMock(case_arr));
@@ -117,16 +120,16 @@ namespace ArrayList.Tests
 
             arr.Delete();
 
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(arr2, arr);
+
         }
 
+        [TestCase(1, 1, new int[] { 1, 2, 3, 4})]
         [TestCase(1, 2, new int[] { 1, 2, 3})]
         [TestCase(2, 0, new int[] { 5, 4, 3, 2, 1 })]
         [TestCase(3, 9, new int[] {  })]
+        [TestCase(4, 5, new int[] {  })]
+        [TestCase(5, 100, new int[] {  })]
         public void Delete(int case_arr, int amount, int[] expected)
         {
             ArrayList arr = new ArrayList(ArrayMock(case_arr));
@@ -134,12 +137,10 @@ namespace ArrayList.Tests
 
             arr.Delete(amount);
 
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(arr2, arr);
+
         }
+
 
         [TestCase(1, new int[] { 2, 3, 4, 5 })]
         [TestCase(2, new int[] { 4, 3, 2, 1 })]
@@ -152,11 +153,8 @@ namespace ArrayList.Tests
 
             arr.DeleteFromOrigin();
 
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(arr2, arr);
+
         }
 
         [TestCase(1, 2, new int[] { 3, 4, 5 })]
@@ -169,12 +167,32 @@ namespace ArrayList.Tests
 
             arr.DeleteFromOrigin(amount);
 
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(arr2, arr);
+
         }
+
+        [TestCase(1)]
+        [TestCase(2)]
+        public void DeleteFromOriginNegative(int case_of_override)
+        {
+            if (case_of_override == 1)                                  //тестирование метода DeleteFromOrigin()
+            {
+                ArrayList arr = new ArrayList(new int[] { });
+                try { arr.DeleteFromOrigin(); }
+                catch { Assert.Pass(); }
+                Assert.Fail();
+
+            }
+            if (case_of_override == 2)                                  //тестирование метода DeleteFromOrigin(int[] )
+            {
+                ArrayList arr = new ArrayList(new int[] { 1, 2, 3 });
+                try { arr.DeleteFromOrigin(5); }
+                catch { Assert.Pass(); }
+                Assert.Fail();
+
+            }
+        }
+
 
         [TestCase(1, 2, new int[] { 1, 2, 4, 5 })]
         [TestCase(1, 0, new int[] { 2, 3, 4, 5 })]
@@ -187,17 +205,18 @@ namespace ArrayList.Tests
 
             arr.DeleteFromIndex(index);
 
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(arr2, arr);
+
         }
 
         [TestCase(1, 2, 2, new int[] { 1, 2, 5 })]
         [TestCase(1, 0, 0, new int[] { 1, 2, 3, 4, 5 })]
         [TestCase(1, 4, 1, new int[] { 1, 2, 3, 4 })]
         [TestCase(5, 0, 1, new int[] { })]
+        [TestCase(1, 4, 6, new int[] { 1, 2, 3, 4})]
+        [TestCase(2, 0, 6, new int[] { })]
+        [TestCase(2, 10000, 1, new int[] { 5, 4, 3, 2, 1 })]
+
         public void DeleteFromIndex(int case_arr, int index, int amount, int[] expected)
         {
             ArrayList arr = new ArrayList(ArrayMock(case_arr));
@@ -205,325 +224,304 @@ namespace ArrayList.Tests
 
             arr.DeleteFromIndex(index, amount);
 
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(arr2, arr);
+
         }
 
-        [TestCase(0, 6)]
-        [TestCase(-1, 1)]
-        [TestCase(10000, 1)]
-        public void DeleteFromIndexNegative(int index, int amount)
+        [TestCase(1, -1)]
+        [TestCase(2, -1)]
+        public void DeleteFromIndexNegative(int case_of_override, int index)
         {
-            ArrayList arr = new ArrayList(ArrayMock(1));
+            if (case_of_override == 1)
+            {
+                ArrayList arr = new ArrayList();
 
-            try { arr.DeleteFromIndex(index, amount); }
+                try { arr.DeleteFromIndex(index); }
+                catch { Assert.Pass(); }
+                Assert.Fail();
+            }
+            if (case_of_override == 2)
+            {
+                ArrayList arr = new ArrayList();
+
+                try { arr.DeleteFromIndex(index, 1); }
+                catch { Assert.Pass(); }
+                Assert.Fail();
+            }
+        }
+
+        [TestCase(1,5)]
+        [TestCase(2,5)]
+        [TestCase(3,9)]
+        [TestCase(4,0)]
+        [TestCase(5,1)]
+        public void Length(int case_of_mock, int expected)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(case_of_mock));
+
+            Assert.AreEqual(expected, arr.Length);
+        }
+
+        [TestCase(1, 0, 1)]
+        [TestCase(2, 1, 4)]
+        [TestCase(3, 5, 444)]
+        public void AccessToIndex(int case_of_arr, int index, int expected)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+
+            Assert.AreEqual(expected, arr.AccessToIndex(index));
+        }
+
+
+        [TestCase(1, 6)]
+        [TestCase(1, -1)]
+        public void AccessToIndexNegative(int case_of_arr, int index)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+
+            try { arr.AccessToIndex(index); }
             catch { Assert.Pass(); }
             Assert.Fail();
         }
 
-        [Test]
-        public void Test6()
+        [TestCase(1, 5, 4)]
+        [TestCase(1, 1, 0)]
+        [TestCase(5, 1, 0)]
+        public void IndexOfElement(int case_of_arr, int element, int expected)
         {
-            ArrayList arr = new ArrayList();
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            int actual = arr.IndexOfElement(element);
 
-            arr.Add(3);
-            arr.AddToOrigin(1);
-            arr.AddToIndex(1, 2);
-            arr.DeleteFromIndex(1);
+            Assert.AreEqual(expected, actual);
+        }
 
-            if (arr.Length == 2)
-            {
-                Assert.Pass();
-            }
+        [TestCase(1, -1)]
+        [TestCase(1, 6)]
+        public void IndexOfElementNegative(int case_of_arr, int element)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+
+            try { arr.IndexOfElement(element); }
+            catch (ArgumentException) { Assert.Pass(); }
             Assert.Fail();
         }
 
-        [Test]
-        public void Test7()
+        [TestCase(1, 4, 9, new int[] { 1,2,3,4,9})]
+        [TestCase(1, 5, 9, new int[] { 1,2,3,4,5,9})]
+        [TestCase(1, 7, 9, new int[] { 1,2,3,4,5,0,0,9})]
+        public void SetElement(int case_of_arr, int index, int element, int[] expected_arr)
         {
-            ArrayList arr = new ArrayList();
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            ArrayList expected = new ArrayList(expected_arr);
 
-            arr.Add(3);
-            arr.AddToOrigin(1);
-            arr.AddToIndex(1, 2);
-            arr.DeleteFromIndex(1);
+            arr.SetElement(index, element);
 
-            if (arr.AccessToIndex(1) == 3)
-            {
-                Assert.Pass();
-            }
+            Assert.AreEqual(expected, arr);
+        }
+
+        [TestCase(1, -1)]
+        public void SetElementNegative(int case_of_arr, int index)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+
+            try { arr.SetElement(index, 1); }
+            catch (ArgumentOutOfRangeException) { Assert.Pass(); }
             Assert.Fail();
         }
 
-        [Test]
-        public void Test8()
+        [TestCase(1, 1)]
+        [TestCase(2, 2)]
+        [TestCase(3, 3)]
+        [TestCase(4, 4)]
+        [TestCase(5, 5)]
+        public void Reverse(int case_of_arr, int case_of_reverse_arr)
         {
-            ArrayList arr = new ArrayList();
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            ArrayList expected = new ArrayList(ReverseMock(case_of_reverse_arr));
 
-            arr.Add(3);
-            arr.AddToOrigin(1);
-            arr.AddToIndex(1, 2);
-            arr.DeleteFromIndex(1);
-
-            if (arr.IndexOfElement(3) == 1)
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
-        }
-
-        [Test]
-        public void Test9()
-        {
-            ArrayList arr = new ArrayList();
-            ArrayList arr2 = new ArrayList();
-
-            arr.Add(3);
-            arr.AddToOrigin(1);
-            arr.AddToIndex(1, 2);
-            arr.SetElement(1, 4);
-
-            arr2.Add(1);
-            arr2.Add(4);
-            arr2.Add(3);
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
-        }
-
-        [Test]
-        public void Test10()
-        {
-            ArrayList arr = new ArrayList();
-            ArrayList arr2 = new ArrayList();
-
-            arr.Add(1);
-            arr.Add(2);
-            arr.Add(3);
-            arr.Add(4);
-            arr.Add(5);
             arr.Reverse();
 
-            arr2.Add(5);
-            arr2.Add(4);
-            arr2.Add(3);
-            arr2.Add(2);
-            arr2.Add(1);
-            if (arr.Equals(arr2))
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(expected, arr);
+        }
+
+       
+        [TestCase(1, 1)]
+        [TestCase(2, 1)]
+        [TestCase(3, 111)]
+        [TestCase(5, 1)]
+        public void FindMin(int case_of_arr, int expected)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            int actual = arr.FindMin();
+
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void Test11()
+        public void FindMinNegative()
         {
             ArrayList arr = new ArrayList();
 
-            arr.Add(1);
-            arr.Add(2);
-            arr.Add(3);
-            arr.Add(4);
-            arr.Add(5);
-            
-            if (arr.FindMax() == 5)
-            {
-                Assert.Pass();
-            }
+            try { arr.FindMin(); }
+            catch { Assert.Pass(); }
             Assert.Fail();
         }
 
-        [Test]
-        public void Test12()
+        [TestCase(1, 5)]
+        [TestCase(2, 5)]
+        [TestCase(3, 999)]
+        [TestCase(5, 1)]
+        public void FindMax(int case_of_arr, int expected)
         {
-            ArrayList arr = new ArrayList();
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            int actual = arr.FindMax();
 
-            arr.Add(1);
-            arr.Add(2);
-            arr.Add(3);
-            arr.Add(4);
-            arr.Add(5);
-
-            if (arr.FindMin() == 1)
-            {
-                Assert.Pass();
-            }
-            Assert.Fail();
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void Test13()
+        public void FindMaxNegative()
         {
             ArrayList arr = new ArrayList();
 
-            arr.Add(1);
-            arr.Add(2);
-            arr.Add(3);
-            arr.Add(4);
-            arr.Add(5);
-
-            if (arr.IndexOfMax() == 4)
-            {
-                Assert.Pass();
-            }
+            try { arr.FindMax(); }
+            catch { Assert.Pass(); }
             Assert.Fail();
         }
 
+        [TestCase(1, 4)]
+        [TestCase(2, 0)]
+        [TestCase(3, 0)]
+        [TestCase(5, 0)]
+        [TestCase(6, 0)]
+        public void IndexOfMax(int case_of_arr, int expected)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            int actual = arr.IndexOfMax();
+
+            Assert.AreEqual(expected, actual);
+        }
+    
         [Test]
-        public void Test14()
+        public void IndexOfMaxNegative()
         {
             ArrayList arr = new ArrayList();
-
-            arr.Add(1);
-            arr.Add(2);
-            arr.Add(3);
-            arr.Add(4);
-            arr.Add(5);
-
-            if (arr.IndexOfMin() == 0)
-            {
-                Assert.Pass();
-            }
+            try { int actual = arr.IndexOfMax(); }
+            catch { Assert.Pass(); }
             Assert.Fail();
         }
 
+        [TestCase(1, 0)]
+        [TestCase(2, 4)]
+        [TestCase(3, 8)]
+        [TestCase(5, 0)]
+        [TestCase(6, 1)]
+        public void IndexOfMin(int case_of_arr, int expected)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            int actual = arr.IndexOfMin();
+
+            Assert.AreEqual(expected, actual);
+        }
+
         [Test]
-        public void Test15()
+        public void IndexOfMinNegative()
         {
             ArrayList arr = new ArrayList();
-            ArrayList arr2 = new ArrayList();
+            try { int actual = arr.IndexOfMin(); }
+            catch { Assert.Pass(); }
+            Assert.Fail();
+        }
 
-            arr.Add(5);
-            arr.Add(2);
-            arr.Add(3);
-            arr.Add(1);
-            arr.Add(4);
+
+        [TestCase(2, new int[] { 1, 2, 3, 4, 5 })]
+        [TestCase(3, new int[] { 111, 222, 333, 444, 555, 666, 777, 888, 999 })]
+        [TestCase(4, new int[] { })]
+        [TestCase(5, new int[] { 1 })]
+        [TestCase(7, new int[] { 3, 5, 7, 10, 10, 11 })]
+        public void SortIncrease(int case_of_arr, int[] expected_arr)
+        {
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            ArrayList expected = new ArrayList(expected_arr);
+
             arr.SortIncrease();
 
-            arr2.Add(1);
-            arr2.Add(2);
-            arr2.Add(3);
-            arr2.Add(4);
-            arr2.Add(5);
-            if (arr.Equals(arr2))
-                Assert.Pass();
-            Assert.Fail();
+            Assert.AreEqual(expected, arr);
+
         }
 
-        [Test]
-        public void Test16()
+        [TestCase(2, new int[] { 5,4,3,2,1})]
+        [TestCase(3, new int[] { 999, 888, 777, 666, 555, 444, 333, 222, 111 })]
+        [TestCase(4, new int[] { })]
+        [TestCase(5, new int[] { 1 })]
+        [TestCase(7, new int[] { 11, 10, 10, 7, 5, 3 })]
+        public void SortDecrease(int case_of_arr, int[] expected_arr)
         {
-            ArrayList arr = new ArrayList();
-            ArrayList arr2 = new ArrayList();
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            ArrayList expected = new ArrayList(expected_arr);
 
-            arr.Add(5);
-            arr.Add(2);
-            arr.Add(3);
-            arr.Add(1);
-            arr.Add(4);
             arr.SortDecrease();
 
-            arr2.Add(5);
-            arr2.Add(4);
-            arr2.Add(3);
-            arr2.Add(2);
-            arr2.Add(1);
-            if (arr.Equals(arr2))
-                Assert.Pass();
-            Assert.Fail();
+            Assert.AreEqual(expected, arr);
         }
 
-        [Test]
-        public void Test17()
+        [TestCase(1, 4, new int[] { 1, 2, 3, 5 })]
+        [TestCase(2, 1, new int[] { 5, 4, 3, 2 })]
+        [TestCase(3, 222, new int[] { 999, 888, 777, 666, 555, 444, 333, 111 })]
+        [TestCase(5, 1, new int[] { })]
+        [TestCase(6, 10, new int[] { 5, 10 })]
+        [TestCase(6, 20, new int[] { 10, 5, 10 })]
+
+        public void DeleteFirstElementWhithValue(int case_of_arr, int value, int[] expected_arr)
         {
-            ArrayList arr = new ArrayList();
-            ArrayList arr2 = new ArrayList();
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            ArrayList expected = new ArrayList(expected_arr);
 
-            arr.Add(5);
-            arr.Add(2);
-            arr.Add(3);
-            arr.Add(1);
-            arr.Add(4);
-            arr.DeleteFirstElementWhithValue(1);
+            arr.DeleteFirstElementWhithValue(value);
 
-            arr2.Add(5);
-            arr2.Add(2);
-            arr2.Add(3);
-            arr2.Add(4);
-            if (arr.Equals(arr2))
-                Assert.Pass();
-            Assert.Fail();
+            Assert.AreEqual(expected, arr);
         }
 
-        [Test]
-        public void Test18()
+
+        [TestCase(1, 4, new int[] { 1, 2, 3, 5 })]
+        [TestCase(2, 1, new int[] { 5, 4, 3, 2 })]
+        [TestCase(3, 222, new int[] { 999, 888, 777, 666, 555, 444, 333, 111 })]
+        [TestCase(6, 10, new int[] { 5 })]
+        [TestCase(5, 1, new int[] { })]
+        [TestCase(5, 10, new int[] { 1 })]
+        public void DeleteAllElementsWhithValue(int case_of_arr, int value, int[] expected_arr)
         {
-            ArrayList arr = new ArrayList();
-            ArrayList arr2 = new ArrayList();
+            ArrayList arr = new ArrayList(ArrayMock(case_of_arr));
+            ArrayList expected = new ArrayList(expected_arr);
 
-            arr.Add(5);
-            arr.Add(2);
-            arr.Add(5);
-            arr.Add(1);
-            arr.Add(5);
-            arr.DeleteAllElementsWhitsValue(5);
+            arr.DeleteAllElementsWhithValue(value);
 
-            arr2.Add(2);
-            arr2.Add(1);
-            if (arr.Equals(arr2))
-                Assert.Pass();
-            Assert.Fail();
+            Assert.AreEqual(expected, arr);
+
         }
 
-        [Test]
-        public void Test19()
-        {
-            ArrayList arr = new ArrayList();
-            ArrayList arr2 = new ArrayList();
-
-            int[] adding_arr = new int[] { 3, 4 };
-            arr.Add(1);
-            arr.Add(2);
-            arr.Add(adding_arr);
-
-            arr2.Add(1);
-            arr2.Add(2);
-            arr2.Add(3);
-            arr2.Add(4);
-            if (arr.Equals(arr2))
-                Assert.Pass();
-            Assert.Fail();
-        }
 
         [Test]
         public void Test20()
         {
             ArrayList arr = new ArrayList();
-            ArrayList arr2 = new ArrayList();
+            ArrayList expected = new ArrayList();
 
             int[] adding_arr = new int[] { 3, 4 };
             arr.Add(1);
             arr.Add(2);
             arr.AddToOrigin(adding_arr);
 
-            arr2.Add(3);
-            arr2.Add(4);
-            arr2.Add(1);
-            arr2.Add(2);
-            if (arr.Equals(arr2))
-                Assert.Pass();
-            Assert.Fail();
+            expected.Add(3);
+            expected.Add(4);
+            expected.Add(1);
+            expected.Add(2);
+            Assert.AreEqual(expected, arr);
         }
 
-        
 
-        
+
+
 
         private int[] ArrayMock(int i)
         {
@@ -545,6 +543,12 @@ namespace ArrayList.Tests
                     return arr;
                 case 5:
                     arr = new int[] { 1 };
+                    return arr;
+                case 6:
+                    arr = new int[] { 10, 5, 10 };
+                    return arr;
+                case 7:
+                    arr = new int[] { 11, 7, 3, 10, 5, 10 };
                     return arr;
                 default:
                     throw new Exception("Invalid value of parameter");
@@ -569,8 +573,36 @@ namespace ArrayList.Tests
                 case 4:
                     arr = new int[] { 10 };
                     return arr;
+                case 7:
+                    arr = new int[] { 3, 5, 7, 10, 10, 11 };
+                    return arr;
                 default:
                     throw new Exception("Invalid value of parameter");
+            }
+        }
+
+        private int[] ReverseMock(int i)
+        {
+            int[] arr;
+            switch (i)
+            {
+                case 1:
+                    arr = new int[] { 5, 4, 3, 2, 1 };
+                    return arr;
+                case 2:
+                    arr = new int[] { 1, 2, 3, 4, 5 };
+                    return arr;
+                case 3:
+                    arr = new int[] { 111, 222, 333, 444, 555, 666, 777, 888, 999 };
+                    return arr;
+                case 4:
+                    arr = new int[] { };
+                    return arr;
+                case 5:
+                    arr = new int[] { 1 };
+                    return arr;
+                default:
+                    throw new ArgumentOutOfRangeException("Parameters should be in 1-5");
             }
         }
     }
